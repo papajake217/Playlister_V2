@@ -280,7 +280,7 @@ class App extends React.Component {
         let canRedo = this.tps.hasTransactionToRedo();
         let canClose = this.state.currentList !== null;
         return (
-            <div id="root">
+            <div id="root-root">
                 <Banner />
                 <SidebarHeading
                     createNewListCallback={this.createNewList}

@@ -19,12 +19,26 @@ body {
 
 #root {
   background-color: var(--swatch-primary);
-  font-family: serif;
+  font-family: 'Tangerine', serif;
   position: absolute;
+ 
   width: 80%;
   left: 10%;
   height:90%;
   top: 5%;
+  display:grid;
+  grid-template-columns: 30% 70%;
+  grid-template-rows: 10% 10% 70% 10%;
+}
+
+#root-root{
+  background-color: var(--swatch-primary);
+  font-family: 'Tangerine', serif;
+  position: absolute;
+  width: 100%;
+  left: 0%;
+  height:100%;
+  top: 0%;
   display:grid;
   grid-template-columns: 30% 70%;
   grid-template-rows: 10% 10% 70% 10%;
@@ -109,11 +123,12 @@ body {
 }
 
 .list-card, .selected-list-card, .unselected-list-card {
-  font-size: 18pt;
+  font-size: 36pt;
   margin: 10px;
   padding: 20px;
   border-radius: 25px;
 }
+
 
 .unselected-list-card:hover {
   cursor: pointer;
@@ -156,8 +171,24 @@ body {
 .playlister-song, .playlister-song-dragged-to { 
   display:flex;
   align-items: center;
-  font-size: 24pt;
+  font-size: 36pt;
   height:20%;
+  margin: 10px;
+  padding: 20px;
+  border-radius: 25px;
+  background-color: var(--swatch-complement);
+}
+
+.playlister-song:hover{
+  display:flex;
+  align-items: center;
+  font-size: 24pt;
+  color: white;
+  height:20%;
+  margin: 10px;
+  padding: 20px;
+  border-radius: 25px;
+  background-color: black;
 }
 
 input {
@@ -191,8 +222,8 @@ input {
 
 .modal-root {
   position: relative;
-  max-width: 1200vw;
-  max-height: 600vh;
+  max-width: 2400vw;
+  max-height: 1200vh;
   overflow: visible;
   display: flex;
   flex-direction: column;
@@ -204,12 +235,13 @@ input {
   box-shadow: 5px 10px #888888;
 }
 
+
 .modal-root > * {
   padding: 1rem;
 }
 
 .modal-north {
-  font-size:32pt;
+  font-size:25pt;
   font-weight: bold;
   background-color: #669966;
   color:white;
@@ -220,7 +252,7 @@ input {
   grid-template-columns: 30% 65%;
   grid-template-rows: 33% 33% 33%;
   gap: 10px 20px;
-  font-size: 48pt;
+  font-size: 30pt;
 }
 
 span {
