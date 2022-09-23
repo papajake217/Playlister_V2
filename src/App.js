@@ -286,6 +286,38 @@ class App extends React.Component {
         modal.classList.remove("is-visible");
     }
 
+    markSongForDelete = (songID) => {
+        let index = songID - 1;
+
+        this.setState(prevState =>({
+            currentList: prevState.currentList,
+            IDtoDelete: index,
+            sessionData:prevState.sessionData
+        }), () => { 
+            this.deleteSong();
+        })
+
+    }
+
+
+    deleteSong(){
+        let currList = this.state.currentList;
+        let index = this.state.IDtoDelete;
+        let songs = currList.songs;
+
+        songs.splice(index,1);
+
+        this.setState(prevState =>{
+            return ({
+                currentList:currList
+            })
+        }, () => {
+           this.db.mutationUpdateList(currList);
+           this.db.mutationUpdateSessionData(this.state.sessionData);
+        });
+    }
+
+
     markSongForEdit = (songID) => {
         
         let index = songID - 1;
@@ -366,7 +398,9 @@ class App extends React.Component {
                 <PlaylistCards
                     currentList={this.state.currentList}
                     moveSongCallback={this.addMoveSongTransaction}
-                    editSongCallback={this.markSongForEdit} />
+                    editSongCallback={this.markSongForEdit}
+                    deleteSongCallback={this.markSongForDelete} 
+                    />
                 <Statusbar 
                     currentList={this.state.currentList} />
                 <DeleteListModal

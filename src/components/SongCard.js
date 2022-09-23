@@ -66,7 +66,10 @@ export default class SongCard extends React.Component {
         return this.props.id.substring("playlist-song-".length);
     }
 
-   
+   handleDeleteSong = (event) => {
+        event.stopPropagation();
+        this.props.deleteSongCallback(this.getItemNum());
+   }
 
     render() {
         const { song } = this.props;
@@ -104,7 +107,7 @@ export default class SongCard extends React.Component {
                 </div>
             <a href = {link}>   {song.title} by {song.artist} </a>
             <div>
-            <input type="button" id={divID} value="&#x2715;" class="song-delete-button"  />;
+            <input type="button" id={divID} value="&#x2715;" class="song-delete-button" onClick = {this.handleDeleteSong} />;
             </div>
             </div>
            
