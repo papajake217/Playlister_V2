@@ -7,9 +7,16 @@ export default class SongCard extends React.Component {
         this.state = {
             isDragging: false,
             draggedTo: false,
-            hover: false,
+            editActive: false,     
         }
     }
+
+    handleDoubleClick = (event) => {
+        event.stopPropagation();
+        this.props.editSongCallback(this.getItemNum()); // Calls function in one level up (playlistcards)
+    }
+
+
     handleDragStart = (event) => {
         event.dataTransfer.setData("song", event.target.id);
         this.setState(prevState => ({
@@ -64,7 +71,8 @@ export default class SongCard extends React.Component {
     render() {
         const { song } = this.props;
         let num = this.getItemNum();
-        console.log("num: " + num);
+        num += ". "
+        
         let itemClass = "playlister-song";
         if (this.state.draggedTo) {
             itemClass = "playlister-song-dragged-to";
@@ -72,6 +80,11 @@ export default class SongCard extends React.Component {
         
         let link = "https://www.youtube.com/watch?v=" + song.youTubeId
         
+        if(this.state.editActive === true){
+            
+        }
+
+        let divID = "delete-" + num; 
 
         return (
             <div
@@ -81,12 +94,20 @@ export default class SongCard extends React.Component {
                 onDragOver={this.handleDragOver}
                 onDragEnter={this.handleDragEnter}
                 onDragLeave={this.handleDragLeave}
+                onDoubleClick={this.handleDoubleClick}
                 onDrop={this.handleDrop}
                 draggable="true"
                 
             >
+                <div>
+                    {num}
+                </div>
             <a href = {link}>   {song.title} by {song.artist} </a>
+            <div>
+            <input type="button" id={divID} value="&#x2715;" class="song-delete-button"  />;
             </div>
+            </div>
+           
         )
     }
 }

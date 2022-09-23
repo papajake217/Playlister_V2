@@ -18,6 +18,7 @@ import PlaylistCards from './components/PlaylistCards.js';
 import SidebarHeading from './components/SidebarHeading.js';
 import SidebarList from './components/SidebarList.js';
 import Statusbar from './components/Statusbar.js';
+import EditSongModal from './components/EditSongModal';
 
 class App extends React.Component {
     constructor(props) {
@@ -274,6 +275,67 @@ class App extends React.Component {
         let modal = document.getElementById("delete-list-modal");
         modal.classList.remove("is-visible");
     }
+
+    showEditSongModal() {
+        let modal = document.getElementById("edit-song-modal");
+        modal.classList.add("is-visible");
+    }
+
+    hideEditSongModal() {
+        let modal = document.getElementById("edit-song-modal");
+        modal.classList.remove("is-visible");
+    }
+
+    markSongForEdit = (songID) => {
+        
+        let index = songID - 1;
+        let song = this.state.currentList.songs[index];
+        
+        this.setState(prevState =>({
+            currentList: prevState.currentList,
+            IDtoEdit: index,
+            sessionData:prevState.sessionData
+        }), () =>{
+            document.getElementById("titleInput").value = song.title;
+            document.getElementById("artistInput").value = song.artist;
+            document.getElementById("IDInput").value = song.youTubeId;
+            this.showEditSongModal();
+        });
+        
+        
+    }
+
+    doEditSong = () =>{
+        
+        this.hideEditSongModal();
+        this.performEdit(this.state.IDtoEdit);
+    }
+
+
+    performEdit = (songID) =>{
+        let editedTitle = document.getElementById("titleInput").value;
+        let editedArtist = document.getElementById("artistInput").value;
+        let editedID = document.getElementById("IDInput").value;
+
+        let currList = this.state.currentList;
+
+
+        this.setState(prevState =>{
+            currList.songs[songID] = 
+            {
+                title:editedTitle,
+                artist:editedArtist,
+                youTubeId:editedID
+            };
+            return ({
+                currentList:currList
+            })
+        }, () => {
+           this.db.mutationUpdateList(currList);
+           this.db.mutationUpdateSessionData(this.state.sessionData);
+        });
+    }
+
     render() {
         let canAddSong = this.state.currentList !== null;
         let canUndo = this.tps.hasTransactionToUndo();
@@ -303,7 +365,8 @@ class App extends React.Component {
                 />
                 <PlaylistCards
                     currentList={this.state.currentList}
-                    moveSongCallback={this.addMoveSongTransaction} />
+                    moveSongCallback={this.addMoveSongTransaction}
+                    editSongCallback={this.markSongForEdit} />
                 <Statusbar 
                     currentList={this.state.currentList} />
                 <DeleteListModal
@@ -311,6 +374,13 @@ class App extends React.Component {
                     hideDeleteListModalCallback={this.hideDeleteListModal}
                     deleteListCallback={this.deleteMarkedList}
                 />
+                <EditSongModal
+                    hideEditSongModalCallback={this.hideEditSongModal}
+                    editSongCallback={this.doEditSong}
+                />
+
+
+                
             </div>
         );
     }

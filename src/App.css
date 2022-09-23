@@ -182,7 +182,7 @@ body {
 .playlister-song:hover{
   display:flex;
   align-items: center;
-  font-size: 24pt;
+  font-size: 36pt;
   color: white;
   height:20%;
   margin: 10px;
@@ -330,6 +330,13 @@ span {
 
 .modal p + p {
   margin-top: 1rem;
+}
+
+.song-delete-button{
+  text-align: right;
+  float: right;
+  position:absolute;
+  right: 30px;
 }
 
 /* ANIMATIONS
