@@ -320,7 +320,7 @@ class App extends React.Component {
 
     performDelete = (songID) =>{
         let currList = this.state.currentList;
-        let index = this.state.IDtoDelete;
+        let index = songID;
         let songs = currList.songs;
 
         songs.splice(index,1);
