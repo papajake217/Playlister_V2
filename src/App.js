@@ -334,8 +334,35 @@ class App extends React.Component {
     }
 
 
-    
+    addNewSong = () => {
+        
+        this.setState(prevState =>({
+            currentList: prevState.currentList,
+            sessionData:prevState.sessionData
+        }), () => { 
+            this.performAddSong();
+        })
+    }
 
+    performAddSong = () => {
+        let currList = this.state.currentList;
+
+        currList.songs.push({
+            title: "Untitled",
+            artist: "Unknown",
+            youTubeId: "dQw4w9WgXcQ"
+        });
+
+        this.setState(prevState =>{
+            return ({
+                currentList:currList
+            })
+        }, () => {
+           this.db.mutationUpdateList(currList);
+           this.db.mutationUpdateSessionData(this.state.sessionData);
+        });
+
+    }
 
     markSongForEdit = (songID) => {
         
@@ -413,6 +440,7 @@ class App extends React.Component {
                     undoCallback={this.undo}
                     redoCallback={this.redo}
                     closeCallback={this.closeCurrentList}
+                    addSongCallback={this.addNewSong}
                 />
                 <PlaylistCards
                     currentList={this.state.currentList}
