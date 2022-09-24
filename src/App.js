@@ -19,6 +19,7 @@ import SidebarHeading from './components/SidebarHeading.js';
 import SidebarList from './components/SidebarList.js';
 import Statusbar from './components/Statusbar.js';
 import EditSongModal from './components/EditSongModal';
+import DeleteSongModal from './components/DeleteSongModal';
 
 class App extends React.Component {
     constructor(props) {
@@ -276,6 +277,16 @@ class App extends React.Component {
         modal.classList.remove("is-visible");
     }
 
+    showDeleteSongModal(){
+        let modal = document.getElementById("delete-song-modal");
+        modal.classList.add("is-visible");
+    }
+
+    hideDeleteSongModal(){
+        let modal = document.getElementById("delete-song-modal");
+        modal.classList.remove("is-visible");
+    }
+
     showEditSongModal() {
         let modal = document.getElementById("edit-song-modal");
         modal.classList.add("is-visible");
@@ -294,13 +305,18 @@ class App extends React.Component {
             IDtoDelete: index,
             sessionData:prevState.sessionData
         }), () => { 
-            this.deleteSong();
+            this.showDeleteSongModal();
         })
 
     }
 
 
-    deleteSong(){
+    deleteSong = () => {
+        this.hideDeleteSongModal();
+        this.performDelete(this.state.IDtoDelete);
+    }
+
+    performDelete = (songID) =>{
         let currList = this.state.currentList;
         let index = this.state.IDtoDelete;
         let songs = currList.songs;
@@ -316,7 +332,6 @@ class App extends React.Component {
            this.db.mutationUpdateSessionData(this.state.sessionData);
         });
     }
-
 
     markSongForEdit = (songID) => {
         
@@ -407,6 +422,10 @@ class App extends React.Component {
                     listKeyPair={this.state.listKeyPairMarkedForDeletion}
                     hideDeleteListModalCallback={this.hideDeleteListModal}
                     deleteListCallback={this.deleteMarkedList}
+                />
+                <DeleteSongModal
+                    hideDeleteSongModalCallback = {this.hideDeleteSongModal}
+                    deleteSongCallback={this.deleteSong}
                 />
                 <EditSongModal
                     hideEditSongModalCallback={this.hideEditSongModal}
