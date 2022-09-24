@@ -171,6 +171,7 @@ body {
 .playlister-song, .playlister-song-dragged-to { 
   display:flex;
   align-items: center;
+  justify-content: space-between;
   font-size: 36pt;
   height:20%;
   margin: 10px;
@@ -335,7 +336,7 @@ span {
 .song-delete-button{
   text-align: right;
   float: right;
-  position:absolute;
+  
   right: 30px;
 }
 

@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
 
 export default class DeleteSongModal extends Component {
+    handleDeleteSong = (event) => {
+        event.preventDefault();
+        this.props.deleteSongCallback(this.props.songID, this.props.song);
+    }
+
     render() {
-        const { song, deleteSongCallback, hideDeleteSongModalCallback } = this.props;
+        const { song, deleteSongCallback, hideDeleteSongModalCallback, songID } = this.props;
         let name = "";
         if (song) {
-            name = song.name;
+            name = song.title;
         }
         return (
             <div 
@@ -25,7 +30,7 @@ export default class DeleteSongModal extends Component {
                             <input type="button" 
                                 id="delete-song-confirm-button" 
                                 class="modal-button" 
-                                onClick={deleteSongCallback}
+                                onClick={this.handleDeleteSong}
                                 value='Confirm' />
                             <input type="button" 
                                 id="delete-song-cancel-button" 

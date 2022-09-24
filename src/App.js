@@ -7,7 +7,8 @@ import jsTPS from './common/jsTPS.js';
 
 // OUR TRANSACTIONS
 import MoveSong_Transaction from './transactions/MoveSong_Transaction.js';
-
+import AddSong_Transaction from './transactions/AddSong_Transaction';
+import DeleteSong_Transaction from './transactions/DeleteSong_Transaction';
 // THESE REACT COMPONENTS ARE MODALS
 import DeleteListModal from './components/DeleteListModal.js';
 
@@ -299,9 +300,10 @@ class App extends React.Component {
 
     markSongForDelete = (songID) => {
         let index = songID - 1;
-
+        let song = this.state.currentList.songs[index];
         this.setState(prevState =>({
             currentList: prevState.currentList,
+            song: song,
             IDtoDelete: index,
             sessionData:prevState.sessionData
         }), () => { 
@@ -333,6 +335,47 @@ class App extends React.Component {
         });
     }
 
+    addSpecificSong = (name,artist,youTubeID,index) =>{
+        this.setState(prevState =>({
+            currentList: prevState.currentList,
+            sessionData:prevState.sessionData
+        }), () => { 
+            let currList = this.state.currentList;
+        
+        let newSong = {
+            title: name,
+            artist: artist,
+            youTubeId: youTubeID
+        };
+
+        currList.songs.splice(index,0,newSong);
+
+        this.setState(prevState =>{
+            return ({
+                currentList:currList
+            })
+        }, () => {
+           this.db.mutationUpdateList(currList);
+           this.db.mutationUpdateSessionData(this.state.sessionData);
+        });
+        })
+    }
+ 
+    addSongTransaction = () => {
+        let index = this.state.currentList.songs.length;
+        let transaction = new AddSong_Transaction(this,index);
+        this.tps.addTransaction(transaction);
+    }
+
+    removeSongTransaction = (songID) =>{
+        console.log(songID)
+        let song = this.state.currentList.songs[songID];
+        let name = song.title;
+        let artist = song.artist;
+        let youTubeID = song.youTubeId;
+        let transaction = new DeleteSong_Transaction(this,name,artist,youTubeID,songID);
+        this.tps.addTransaction(transaction);
+    }
 
     addNewSong = () => {
         
@@ -440,7 +483,7 @@ class App extends React.Component {
                     undoCallback={this.undo}
                     redoCallback={this.redo}
                     closeCallback={this.closeCurrentList}
-                    addSongCallback={this.addNewSong}
+                    addSongCallback={this.addSongTransaction}
                 />
                 <PlaylistCards
                     currentList={this.state.currentList}
@@ -457,7 +500,9 @@ class App extends React.Component {
                 />
                 <DeleteSongModal
                     hideDeleteSongModalCallback = {this.hideDeleteSongModal}
-                    deleteSongCallback={this.deleteSong}
+                    deleteSongCallback={this.removeSongTransaction}
+                    songID = {this.state.IDtoDelete}
+                    song = {this.state.song}
                 />
                 <EditSongModal
                     hideEditSongModalCallback={this.hideEditSongModal}

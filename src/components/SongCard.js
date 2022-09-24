@@ -102,12 +102,15 @@ export default class SongCard extends React.Component {
                 draggable="true"
                 
             >
-                <div>
+                <span>
+               
                     {num}
-                </div>
+                
+
             <a href = {link}>   {song.title} by {song.artist} </a>
+            </span>
             <div>
-            <input type="button" id={divID} value="&#x2715;" class="song-delete-button" onClick = {this.handleDeleteSong} />;
+            <input type="button" id={divID} value="&#x2715;" class="song-delete-button" onClick = {this.handleDeleteSong} />
             </div>
             </div>
            
