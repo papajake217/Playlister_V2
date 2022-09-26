@@ -456,6 +456,25 @@ class App extends React.Component {
            this.db.mutationUpdateSessionData(this.state.sessionData);
         });
     }
+    
+
+    keyDownFunction = (event) =>{
+        event.preventDefault();
+        if ((event.metaKey || event.ctrlKey) && event.code === 'KeyZ') {
+            this.undo();
+        } else if((event.metaKey || event.ctrlKey) && event.code === 'KeyY'){
+            this.redo();
+        }
+      }
+
+      componentDidMount(){
+        document.addEventListener("keydown", this.keyDownFunction, false);
+        
+
+      }
+      componentWillUnmount(){
+        document.removeEventListener("keydown", this.keyDownFunction, false);
+      }
 
     render() {
         let canAddSong = this.state.currentList !== null;
@@ -464,6 +483,7 @@ class App extends React.Component {
         let canClose = this.state.currentList !== null;
         return (
             <div id="root-root">
+                
                 <Banner />
                 <SidebarHeading
                     createNewListCallback={this.createNewList}
@@ -485,6 +505,7 @@ class App extends React.Component {
                     closeCallback={this.closeCurrentList}
                     addSongCallback={this.addSongTransaction}
                 />
+                
                 <PlaylistCards
                     currentList={this.state.currentList}
                     moveSongCallback={this.addMoveSongTransaction}
