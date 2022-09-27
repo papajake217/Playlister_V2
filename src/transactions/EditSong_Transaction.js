@@ -9,23 +9,20 @@ import jsTPS_Transaction from "../common/jsTPS.js"
  * @author Jake Papaspiridakos
  */
 export default class EditSong_Transaction extends jsTPS_Transaction {
-    constructor(initApp, index,oldTitle,oldArtist,oldID,newTitle,newArtist,newID) {
+    constructor(initApp, index,oldTitle,oldArtist,oldID) {
         super();
         this.app = initApp;
         this.index = index;
         this.oldTitle = oldTitle;
         this.oldArtist = oldArtist;
         this.oldID = oldID;
-        this.newTitle = newTitle;
-        this.newArtist = newArtist;
-        this.newID = newID;
     }
 
     doTransaction() {
-        this.app.moveSong(this.oldSongIndex, this.newSongIndex);
+        this.app.doEditSong();
     }
     
     undoTransaction() {
-        this.app.moveSong(this.newSongIndex, this.oldSongIndex);
+        this.app.doSpecificEdit(this.index,this.oldTitle,this.oldArtist,this.oldID);
     }
 }

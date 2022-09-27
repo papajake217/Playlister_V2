@@ -21,6 +21,7 @@ import SidebarList from './components/SidebarList.js';
 import Statusbar from './components/Statusbar.js';
 import EditSongModal from './components/EditSongModal';
 import DeleteSongModal from './components/DeleteSongModal';
+import EditSong_Transaction from './transactions/EditSong_Transaction';
 
 class App extends React.Component {
     constructor(props) {
@@ -42,6 +43,7 @@ class App extends React.Component {
             sessionData : loadedSessionData
         }
         this.dialogueOpen = false;
+        
     }
     sortKeyNamePairsByName = (keyNamePairs) => {
         keyNamePairs.sort((keyPair1, keyPair2) => {
@@ -317,13 +319,13 @@ class App extends React.Component {
         this.handleFoolProof();
     }
 
-    disableButton(id) {
+    disableButton = (id) => {
         let button = document.getElementById(id);
         button.classList.add("disabled");
         button.disabled = true;
     }
 
-    enableButton(id) {
+    enableButton = (id) => {
         let button = document.getElementById(id);
         button.classList.remove("disabled");
         button.disabled = false;
@@ -331,7 +333,7 @@ class App extends React.Component {
 
 
     handleFoolProof = () =>{
-        if(this.dialogueOpen){
+        if(this.dialogueOpen || this.state.currentList != null){
             this.disableButton("add-song-button");
             this.disableButton("undo-button");
             this.disableButton("redo-button");
@@ -349,6 +351,18 @@ class App extends React.Component {
             this.disableButton("add-list-button");
         } else{
             this.enableButton("add-list-button");
+        }
+
+        
+        if(this.tps.hasTransactionToRedo() && this.state.currentList != null){
+            this.enableButton("redo-button");
+        } else{
+            this.disableButton("redo-button");
+        }
+        if(this.tps.hasTransactionToUndo() && this.state.currentList != null){
+            this.enableButton("undo-button");
+        }else{
+            this.disableButton("redo-button");
         }
     }
 
@@ -461,6 +475,30 @@ class App extends React.Component {
 
     }
 
+    doEditSongTransaction = (songID) =>{
+        let song = this.state.currentList.songs[this.state.IDtoEdit];
+        let transaction = new EditSong_Transaction(this,this.state.IDtoEdit,song.title,song.artist,song.youTubeId);
+        this.tps.addTransaction(transaction);
+    }
+
+    doSpecificEdit = (index,title,artist,vidId) =>{
+        let currList = this.state.currentList;
+        this.setState(prevState =>{
+            currList.songs[index] = 
+            {
+                title:title,
+                artist:artist,
+                youTubeId:vidId
+            };
+            return ({
+                currentList:currList
+            })
+        }, () => {
+           this.db.mutationUpdateList(currList);
+           this.db.mutationUpdateSessionData(this.state.sessionData);
+        });
+    }
+
     markSongForEdit = (songID) => {
         let index = songID - 1;
         let song = this.state.currentList.songs[index];
@@ -510,6 +548,8 @@ class App extends React.Component {
         });
     }
     
+
+
 
     keyDownFunction = (event) =>{
         event.preventDefault();
@@ -579,7 +619,7 @@ class App extends React.Component {
                 />
                 <EditSongModal
                     hideEditSongModalCallback={this.hideEditSongModal}
-                    editSongCallback={this.doEditSong}
+                    editSongCallback={this.doEditSongTransaction}
                 />
 
                
