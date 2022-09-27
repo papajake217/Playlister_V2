@@ -141,6 +141,7 @@ class App extends React.Component {
         }
     }
     renameList = (key, newName) => {
+        
         let newKeyNamePairs = [...this.state.sessionData.keyNamePairs];
         // NOW GO THROUGH THE ARRAY AND FIND THE ONE TO RENAME
         for (let i = 0; i < newKeyNamePairs.length; i++) {
@@ -191,6 +192,7 @@ class App extends React.Component {
     // THIS FUNCTION BEGINS THE PROCESS OF CLOSING THE CURRENT LIST
     closeCurrentList = () => {
         this.enableButton("add-list-button");
+        this.disableButton("add-song-button");
         this.setState(prevState => ({
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
             currentList: null,
@@ -200,6 +202,7 @@ class App extends React.Component {
             // THE TRANSACTION STACK IS CLEARED
             this.tps.clearAllTransactions();
         });
+        
         
     }
     setStateWithUpdatedList(list) {
@@ -333,37 +336,42 @@ class App extends React.Component {
 
 
     handleFoolProof = () =>{
-        if(this.dialogueOpen || this.state.currentList != null){
+        if(this.dialogueOpen || this.state.currentList == null){
             this.disableButton("add-song-button");
             this.disableButton("undo-button");
             this.disableButton("redo-button");
             this.disableButton("close-button");
             this.componentWillUnmount();
         } else{
-            this.enableButton("add-song-button");
-            this.enableButton("undo-button");
-            this.enableButton("redo-button");
-            this.enableButton("close-button");
+            if(this.state.currentList != null){
+                this.enableButton("add-song-button");
+                this.enableButton('close-button');
+            } else{
+                this.enableButton("add-song-button");
+            }
+    
+            
+            if(this.tps.hasTransactionToRedo() && this.state.currentList != null){
+                this.enableButton("redo-button");
+            } else{
+                this.disableButton("redo-button");
+            }
+            if(this.tps.hasTransactionToUndo() && this.state.currentList != null){
+                this.enableButton("undo-button");
+            }else{
+                this.disableButton("undo-button");
+            }
+            
             this.componentDidMount();
         }
+        
+        
 
-        if(this.state.currentList != null){
-            this.disableButton("add-list-button");
-        } else{
-            this.enableButton("add-list-button");
-        }
 
         
-        if(this.tps.hasTransactionToRedo() && this.state.currentList != null){
-            this.enableButton("redo-button");
-        } else{
-            this.disableButton("redo-button");
-        }
-        if(this.tps.hasTransactionToUndo() && this.state.currentList != null){
-            this.enableButton("undo-button");
-        }else{
-            this.disableButton("redo-button");
-        }
+
+        // lol im going insane fix these conditions add is disabled by default wtf 
+
     }
 
     markSongForDelete = (songID) => {
@@ -554,11 +562,17 @@ class App extends React.Component {
     keyDownFunction = (event) =>{
         event.preventDefault();
         if ((event.metaKey || event.ctrlKey) && event.code === 'KeyZ') {
-            this.undo();
+            if(this.tps.hasTransactionToUndo()){
+                this.undo();
+            }
+            this.handleFoolProof();
         } else if((event.metaKey || event.ctrlKey) && event.code === 'KeyY'){
+            if(this.tps.hasTransactionToRedo()){
             this.redo();
         }
+        this.handleFoolProof();
       }
+    }
 
       componentDidMount = () =>{
         document.addEventListener("keydown", this.keyDownFunction, false);
@@ -572,7 +586,11 @@ class App extends React.Component {
         let canUndo = this.tps.hasTransactionToUndo();
         let canRedo = this.tps.hasTransactionToRedo();
         let canClose = this.state.currentList !== null;
-        
+        try{
+            this.handleFoolProof();
+        } catch{
+
+        }
         return (
             <div id="root-root">
                 
@@ -596,6 +614,7 @@ class App extends React.Component {
                     redoCallback={this.redo}
                     closeCallback={this.closeCurrentList}
                     addSongCallback={this.addSongTransaction}
+                    {...this.handleFoolProof}
                 />
                 
                 <PlaylistCards
