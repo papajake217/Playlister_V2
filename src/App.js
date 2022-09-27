@@ -41,6 +41,7 @@ class App extends React.Component {
             currentList : null,
             sessionData : loadedSessionData
         }
+        this.dialogueOpen = false;
     }
     sortKeyNamePairsByName = (keyNamePairs) => {
         keyNamePairs.sort((keyPair1, keyPair2) => {
@@ -173,6 +174,7 @@ class App extends React.Component {
     // THIS FUNCTION BEGINS THE PROCESS OF LOADING A LIST FOR EDITING
     loadList = (key) => {
         let newCurrentList = this.db.queryGetList(key);
+        this.disableButton("add-list-button");
         this.setState(prevState => ({
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
             currentList: newCurrentList,
@@ -182,9 +184,11 @@ class App extends React.Component {
             // THE TRANSACTION STACK IS CLEARED
             this.tps.clearAllTransactions();
         });
+        
     }
     // THIS FUNCTION BEGINS THE PROCESS OF CLOSING THE CURRENT LIST
     closeCurrentList = () => {
+        this.enableButton("add-list-button");
         this.setState(prevState => ({
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
             currentList: null,
@@ -194,6 +198,7 @@ class App extends React.Component {
             // THE TRANSACTION STACK IS CLEARED
             this.tps.clearAllTransactions();
         });
+        
     }
     setStateWithUpdatedList(list) {
         this.setState(prevState => ({
@@ -268,34 +273,83 @@ class App extends React.Component {
     }
     // THIS FUNCTION SHOWS THE MODAL FOR PROMPTING THE USER
     // TO SEE IF THEY REALLY WANT TO DELETE THE LIST
-    showDeleteListModal() {
+    showDeleteListModal = () => {
         let modal = document.getElementById("delete-list-modal");
         modal.classList.add("is-visible");
+        this.dialogueOpen = true;
+        this.handleFoolProof();
+        
     }
     // THIS FUNCTION IS FOR HIDING THE MODAL
-    hideDeleteListModal() {
+    hideDeleteListModal = () => {
         let modal = document.getElementById("delete-list-modal");
         modal.classList.remove("is-visible");
+        this.dialogueOpen = false;
+        this.handleFoolProof();
     }
 
-    showDeleteSongModal(){
+    showDeleteSongModal = () =>{
         let modal = document.getElementById("delete-song-modal");
         modal.classList.add("is-visible");
+        this.dialogueOpen = true;
+        this.handleFoolProof();
+        
     }
 
-    hideDeleteSongModal(){
+    hideDeleteSongModal = () =>{
         let modal = document.getElementById("delete-song-modal");
         modal.classList.remove("is-visible");
+        this.dialogueOpen = false;
+        this.handleFoolProof();
     }
 
-    showEditSongModal() {
+    showEditSongModal = () => {
         let modal = document.getElementById("edit-song-modal");
         modal.classList.add("is-visible");
+        this.dialogueOpen = true;
+        this.handleFoolProof();
     }
 
-    hideEditSongModal() {
+    hideEditSongModal = () =>{
         let modal = document.getElementById("edit-song-modal");
         modal.classList.remove("is-visible");
+        this.dialogueOpen = false;
+        this.handleFoolProof();
+    }
+
+    disableButton(id) {
+        let button = document.getElementById(id);
+        button.classList.add("disabled");
+        button.disabled = true;
+    }
+
+    enableButton(id) {
+        let button = document.getElementById(id);
+        button.classList.remove("disabled");
+        button.disabled = false;
+    }
+
+
+    handleFoolProof = () =>{
+        if(this.dialogueOpen){
+            this.disableButton("add-song-button");
+            this.disableButton("undo-button");
+            this.disableButton("redo-button");
+            this.disableButton("close-button");
+            this.componentWillUnmount();
+        } else{
+            this.enableButton("add-song-button");
+            this.enableButton("undo-button");
+            this.enableButton("redo-button");
+            this.enableButton("close-button");
+            this.componentDidMount();
+        }
+
+        if(this.state.currentList != null){
+            this.disableButton("add-list-button");
+        } else{
+            this.enableButton("add-list-button");
+        }
     }
 
     markSongForDelete = (songID) => {
@@ -408,7 +462,6 @@ class App extends React.Component {
     }
 
     markSongForEdit = (songID) => {
-        
         let index = songID - 1;
         let song = this.state.currentList.songs[index];
         
@@ -467,12 +520,10 @@ class App extends React.Component {
         }
       }
 
-      componentDidMount(){
+      componentDidMount = () =>{
         document.addEventListener("keydown", this.keyDownFunction, false);
-        
-
       }
-      componentWillUnmount(){
+      componentWillUnmount = () =>{
         document.removeEventListener("keydown", this.keyDownFunction, false);
       }
 
@@ -481,6 +532,7 @@ class App extends React.Component {
         let canUndo = this.tps.hasTransactionToUndo();
         let canRedo = this.tps.hasTransactionToRedo();
         let canClose = this.state.currentList !== null;
+        
         return (
             <div id="root-root">
                 
@@ -530,7 +582,7 @@ class App extends React.Component {
                     editSongCallback={this.doEditSong}
                 />
 
-
+               
                 
             </div>
         );
