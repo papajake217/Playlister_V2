@@ -25,6 +25,7 @@ export default class PlaylistCards extends React.Component {
                                 moveCallback={moveSongCallback}
                                 editSongCallback={editSongCallback}
                                 deleteSongCallback={deleteSongCallback}
+                                
                             />
                         ))
                     }

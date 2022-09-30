@@ -14,6 +14,7 @@ export default class ListCard extends React.Component {
             this.handleLoadList(event);
         }
         else if (event.detail === 2) {
+            this.props.disableEventListener();
             this.handleToggleEdit(event);
         }
     }
@@ -29,21 +30,26 @@ export default class ListCard extends React.Component {
         this.props.deleteListCallback(this.props.keyNamePair);
     }
     handleToggleEdit = (event) => {
+
         this.setState({
             editActive: !this.state.editActive
         });
+
     }
     handleUpdate = (event) => {
         this.setState({ text: event.target.value });
     }
     handleKeyPress = (event) => {
+        
         if (event.code === "Enter") {
             this.handleBlur();
         }
     }
     handleBlur = () => {
+        
         let key = this.props.keyNamePair.key;
         let textValue = this.state.text;
+        
         console.log("ListCard handleBlur: " + textValue);
         this.props.renameListCallback(key, textValue);
         this.handleToggleEdit();
@@ -53,6 +59,7 @@ export default class ListCard extends React.Component {
         const { keyNamePair, selected } = this.props;
 
         if (this.state.editActive) {
+            
             return (
                 <input
                     id={"list-" + keyNamePair.name}
@@ -62,6 +69,7 @@ export default class ListCard extends React.Component {
                     onBlur={this.handleBlur}
                     onChange={this.handleUpdate}
                     defaultValue={keyNamePair.name}
+                    
                 />)
         }
         else {

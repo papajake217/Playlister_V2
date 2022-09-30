@@ -47,7 +47,12 @@ export default class SongCard extends React.Component {
     }
     handleDrop = (event) => {
         event.preventDefault();
-        let target = event.target;
+        let target = null;
+            if(!event.target.id){
+                target = event.target.parentElement.parentElement
+            } else{
+                target = event.target;
+            }
         let targetId = target.id;
         targetId = targetId.substring(target.id.indexOf("-") + 1);
         let sourceId = event.dataTransfer.getData("song");
@@ -59,7 +64,7 @@ export default class SongCard extends React.Component {
         }));
 
         // ASK THE MODEL TO MOVE THE DATA
-        this.props.moveCallback(sourceId, targetId);
+        this.props.moveCallback(sourceId, targetId); 
     }
 
     getItemNum = () => {
@@ -111,7 +116,7 @@ export default class SongCard extends React.Component {
                     {num}
                 
 
-            <a href = {link}>   {song.title} by {song.artist} </a>
+            <a href = {link} draggable = {false}>   {song.title} by {song.artist} </a>
             </span>
             <div>
             <input type="button" id={divID} value="&#x2715;" class="song-delete-button" onClick = {this.handleDeleteSong} />

@@ -51,7 +51,9 @@ function launch() {
       <App />
     </React.StrictMode>,
     document.getElementById('root')
+    
   );
+
 }
 
 if (!isInLocalStorage()) {
@@ -60,6 +62,7 @@ if (!isInLocalStorage()) {
 else {
   launch();
 }
+  
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

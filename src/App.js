@@ -43,6 +43,8 @@ class App extends React.Component {
             sessionData : loadedSessionData
         }
         this.dialogueOpen = false;
+
+        
         
     }
     sortKeyNamePairsByName = (keyNamePairs) => {
@@ -173,6 +175,7 @@ class App extends React.Component {
             this.db.mutationUpdateList(list);
             this.db.mutationUpdateSessionData(this.state.sessionData);
         });
+        this.componentDidMount();
     }
     // THIS FUNCTION BEGINS THE PROCESS OF LOADING A LIST FOR EDITING
     loadList = (key) => {
@@ -336,7 +339,8 @@ class App extends React.Component {
 
 
     handleFoolProof = () =>{
-        if(this.dialogueOpen || this.state.currentList == null){
+        
+        if(this.dialogueOpen || this.state.currentList == null){ 
             this.disableButton("add-song-button");
             this.disableButton("undo-button");
             this.disableButton("redo-button");
@@ -346,10 +350,13 @@ class App extends React.Component {
             if(this.state.currentList != null){
                 this.enableButton("add-song-button");
                 this.enableButton('close-button');
+
+                
             } else{
                 this.enableButton("add-song-button");
             }
-    
+            
+            
             
             if(this.tps.hasTransactionToRedo() && this.state.currentList != null){
                 this.enableButton("redo-button");
@@ -361,16 +368,14 @@ class App extends React.Component {
             }else{
                 this.disableButton("undo-button");
             }
-            
+           
+        
             this.componentDidMount();
+
+           
         }
         
-        
-
-
-        
-
-        // lol im going insane fix these conditions add is disabled by default wtf 
+    
 
     }
 
@@ -581,6 +586,8 @@ class App extends React.Component {
         document.removeEventListener("keydown", this.keyDownFunction, false);
       }
 
+      
+
     render() {
         let canAddSong = this.state.currentList !== null;
         let canUndo = this.tps.hasTransactionToUndo();
@@ -604,6 +611,7 @@ class App extends React.Component {
                     deleteListCallback={this.markListForDeletion}
                     loadListCallback={this.loadList}
                     renameListCallback={this.renameList}
+                    disableEventListener={this.componentWillUnmount}
                 />
                 <EditToolbar
                     canAddSong={canAddSong}
@@ -614,7 +622,7 @@ class App extends React.Component {
                     redoCallback={this.redo}
                     closeCallback={this.closeCurrentList}
                     addSongCallback={this.addSongTransaction}
-                    {...this.handleFoolProof}
+                    
                 />
                 
                 <PlaylistCards
